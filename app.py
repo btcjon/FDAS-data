@@ -34,22 +34,26 @@ async def fetch_and_update_positions():
     # Use a single MetaApi instance for the application
     api = MetaApi(api_token)
     print("MetaApi instance created.")
+    # Initialize connection variable before the try block
+    connection = None
     try:
         # Fetch account and use async with to manage the connection lifecycle
         account = await api.metatrader_account_api.get_account(account_id)
-        async with account.get_streaming_connection() as connection:
-            await connection.wait_synchronized()
-            # ... rest of your code for fetching and updating ...
+        connection = await account.get_streaming_connection()
+        await connection.wait_synchronized()
+        # ... rest of your code for fetching and updating ...
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
-        # await connection.disconnect()  # Removed the call to disconnect as it is not a method of StreamingMetaApiConnectionInstance
+        # Check if connection was established before trying to access terminal state
+        if connection:
+            # Access local copy of terminal state
+            terminalState = connection.terminal_state
+            # ... rest of your code for fetching and updating ...
+
         # Explicitly call garbage collector after the operation
         import gc
         gc.collect()
-
-    # Access local copy of terminal state
-    terminalState = connection.terminal_state
 
     # Access positions from the terminal state
     fetched_positions = terminalState.positions

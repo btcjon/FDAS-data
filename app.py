@@ -2,6 +2,7 @@ from metaapi_cloud_sdk import MetaApi
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler
+from atexit import register
 import os
 import asyncio
 import time
@@ -33,14 +34,12 @@ async def fetch_and_update_positions():
     # Use a single MetaApi instance for the application
     api = MetaApi(api_token)
     print("MetaApi instance created.")
-
-    async def fetch_and_update_positions():
-        try:
-            # Fetch account and use async with to manage the connection lifecycle
-            account = await api.metatrader_account_api.get_account(account_id)
-            async with account.get_streaming_connection() as connection:
-                await connection.wait_synchronized()
-                # ... rest of your code for fetching and updating ...
+    try:
+        # Fetch account and use async with to manage the connection lifecycle
+        account = await api.metatrader_account_api.get_account(account_id)
+        async with account.get_streaming_connection() as connection:
+            await connection.wait_synchronized()
+            # ... rest of your code for fetching and updating ...
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
@@ -103,8 +102,10 @@ async def fetch_and_update_account_info():
 # Create a background scheduler and register shutdown procedure
 scheduler = BackgroundScheduler()
 
+from apscheduler.schedulers.base import STATE_RUNNING
+
 def shutdown():
-    if scheduler.running:
+    if scheduler.state == STATE_RUNNING:
         scheduler.shutdown()
     if client:
         client.close()
@@ -119,6 +120,6 @@ try:
     asyncio.run(fetch_and_update_positions())
     asyncio.run(fetch_and_update_account_info())
     while True:
-        time.sleep(15)  # Sleep for 1 second to prevent high CPU usage
+        time.sleep(15)  # Sleep for 15 seconds to prevent high CPU usage
 except (KeyboardInterrupt, SystemExit):
     shutdown()

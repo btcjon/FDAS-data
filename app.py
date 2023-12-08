@@ -38,7 +38,7 @@ async def fetch_and_update_positions():
     async with api.metatrader_account_api.get_account(account_id) as account:
         connection = await account.get_streaming_connection()
         async with connection:
-        await connection.connect()
+            await connection.connect()
         try:
             # Wait until synchronization completed
             await connection.wait_synchronized()

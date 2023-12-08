@@ -45,7 +45,7 @@ async def fetch_and_update_positions():
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
-        await connection.disconnect()
+        # await connection.disconnect()  # Removed the call to disconnect as it is not a method of StreamingMetaApiConnectionInstance
         # Explicitly call garbage collector after the operation
         import gc
         gc.collect()

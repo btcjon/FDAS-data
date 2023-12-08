@@ -102,10 +102,21 @@ async def fetch_and_update_account_info():
 scheduler = BackgroundScheduler()
 scheduler.add_job(lambda: asyncio.run(fetch_and_update_positions()), 'interval', minutes=1)  # Adjust the interval as needed
 scheduler.add_job(lambda: asyncio.run(fetch_and_update_account_info()), 'interval', minutes=5)  # Adjust the interval as needed
+from atexit import register
+
+def shutdown():
+    scheduler.shutdown()
+    client.close()
+    print("Scheduler and MongoDB client have been shut down.")
+
+register(shutdown)
+
 scheduler.start()
 
-if __name__ == '__main__':
+try:
     asyncio.run(fetch_and_update_positions())
     asyncio.run(fetch_and_update_account_info())
     while True:
         time.sleep(15)  # Sleep for 1 second to prevent high CPU usage
+except (KeyboardInterrupt, SystemExit):
+    shutdown()

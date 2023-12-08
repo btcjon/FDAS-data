@@ -34,10 +34,10 @@ async def fetch_and_update_positions():
     # Use a single MetaApi instance for the application
     api = MetaApi(api_token)
     print("MetaApi instance created.")
-    # Initialize connection variable before the try block
+    # Initialize connection, terminalState, and fetched_positions variables before the try block
     connection = None
-    # Initialize terminalState variable before the try block
     terminalState = None
+    fetched_positions = []  # Default empty list in case of exception
     try:
         # Fetch account and use async with to manage the connection lifecycle
         account = await api.metatrader_account_api.get_account(account_id)
@@ -45,19 +45,15 @@ async def fetch_and_update_positions():
         await connection.wait_synchronized()
         # Access local copy of terminal state
         terminalState = connection.terminal_state
-        # ... rest of your code for fetching and updating ...
+        # Access positions from the terminal state if available
+        if terminalState:
+            fetched_positions = terminalState.positions
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
         # Explicitly call garbage collector after the operation
         import gc
         gc.collect()
-
-    # Check if terminalState was established before trying to access positions
-    if terminalState:
-        # Access positions from the terminal state
-        fetched_positions = terminalState.positions
-        # ... rest of your code for fetching and updating ...
     print("Account and positions fetched.")
 
     # Store positions in MongoDB and create a list of fetched position ids

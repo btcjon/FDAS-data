@@ -39,10 +39,11 @@ async def fetch_and_update_positions():
     connection = await account.get_streaming_connection()
     try:
         await connection.connect()
-        try:
-            # Wait until synchronization completed
-            await connection.wait_synchronized()
-            # ... rest of your code for fetching and updating ...
+        # Wait until synchronization completed
+        await connection.wait_synchronized()
+        # ... rest of your code for fetching and updating ...
+    except Exception as e:
+        print(f"An error occurred: {e}")
     finally:
         await connection.disconnect()
         # Explicitly call garbage collector after the operation

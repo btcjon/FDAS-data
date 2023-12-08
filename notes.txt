@@ -1,0 +1,15 @@
+- .env: Holds configuration variables such as API tokens and database URIs.
+- .gitignore: Lists files and directories to be ignored by version control.
+- data/get_positions_SYNC.json: Example data for testing position synchronization.
+- docs/app_plan.md: Outlines the intended design and functionality of the application.
+- docs/rate_limits.txt: Contains information on API request rate limits.
+- docs/trial-error.md: Logs the development process, including issues and solutions.
+- examples/# positions_WS_grouped.py: Code for managing positions via WebSocket in a grouped manner.
+- examples/ALL_rpcExample.py: Illustrates how to perform remote procedure calls with the MetaApi.
+- examples/get_positions_json_SYNC copy.py: A copy of an example for synchronizing positions in JSON format.
+- examples/get_positions_json_SYNC.py: An example for synchronizing positions in JSON format.
+- examples/metastats_example.py: Demonstrates how to use MetaStats SDK to obtain trading statistics.
+- examples/positions_WS_grouped copy.py: Another copy of the WebSocket example for grouped position management.
+- examples/positions_WS_grouped.py: WebSocket example for managing grouped positions, including connection health checks.
+- utils/cleanup_dups.py: A script to remove duplicate entries from data sets.
+- utils/get_fields.py: A script to extract field names from data structures.

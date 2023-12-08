@@ -79,9 +79,10 @@ async def fetch_and_update_account_info():
 
     # Fetch account and create a streaming connection
     account = await api.metatrader_account_api.get_account(account_id)
-    async with account:
-        connection = await account.get_streaming_connection()
-        await connection.connect()
+    # Fetch account and create a streaming connection
+    account = await api.metatrader_account_api.get_account(account_id)
+    connection = await account.get_streaming_connection()
+    await connection.connect()
 
     # Wait until synchronization completed
     await connection.wait_synchronized()

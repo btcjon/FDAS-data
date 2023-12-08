@@ -1,0 +1,4 @@
+metaapi_cloud_sdk==x.x.x
+python-dotenv==x.x.x
+pymongo==x.x.x
+APScheduler==x.x.x

@@ -30,18 +30,17 @@ positions_collection = db['positions']
 print("MongoDB client and collections created.")
 
 async def fetch_and_update_positions():
-    # Create a MetaApi instance
+    # Use a single MetaApi instance for the application
     api = MetaApi(api_token)
     print("MetaApi instance created.")
 
-    # Fetch account and create a streaming connection
-    account = await api.metatrader_account_api.get_account(account_id)
-    connection = account.get_streaming_connection()
-    try:
-        await connection.connect()
-        # Wait until synchronization completed
-        await connection.wait_synchronized()
-        # ... rest of your code for fetching and updating ...
+    async def fetch_and_update_positions():
+        try:
+            # Fetch account and use async with to manage the connection lifecycle
+            account = await api.metatrader_account_api.get_account(account_id)
+            async with account.get_streaming_connection() as connection:
+                await connection.wait_synchronized()
+                # ... rest of your code for fetching and updating ...
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
@@ -101,19 +100,19 @@ async def fetch_and_update_account_info():
     account_info_collection.update_one({'id': account_id}, {"$set": account_info}, upsert=True)
     print("Account information updated or inserted in MongoDB.")
 
-# Create a background scheduler
+# Create a background scheduler and register shutdown procedure
 scheduler = BackgroundScheduler()
-scheduler.add_job(lambda: asyncio.run(fetch_and_update_positions()), 'interval', minutes=1)  # Adjust the interval as needed
-scheduler.add_job(lambda: asyncio.run(fetch_and_update_account_info()), 'interval', minutes=5)  # Adjust the interval as needed
-from atexit import register
 
 def shutdown():
-    scheduler.shutdown()
-    client.close()
+    if scheduler.running:
+        scheduler.shutdown()
+    if client:
+        client.close()
     print("Scheduler and MongoDB client have been shut down.")
 
+scheduler.add_job(lambda: asyncio.run(fetch_and_update_positions()), 'interval', minutes=1, id='update_positions_job')
+scheduler.add_job(lambda: asyncio.run(fetch_and_update_account_info()), 'interval', minutes=5, id='update_account_info_job')
 register(shutdown)
-
 scheduler.start()
 
 try:

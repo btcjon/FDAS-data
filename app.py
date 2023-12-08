@@ -35,8 +35,8 @@ async def fetch_and_update_positions():
     print("MetaApi instance created.")
 
     # Use a context manager to ensure the connection is closed after use
-    async with api.metatrader_account_api.get_account(account_id) as account:
-        connection = account.get_streaming_connection()
+    account = await api.metatrader_account_api.get_account(account_id)
+    async with account.get_streaming_connection() as connection:
         await connection.connect()
         try:
             # Wait until synchronization completed

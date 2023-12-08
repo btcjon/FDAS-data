@@ -34,13 +34,19 @@ async def fetch_and_update_positions():
     api = MetaApi(api_token)
     print("MetaApi instance created.")
 
-    # Fetch account and create a streaming connection
-    account = await api.metatrader_account_api.get_account(account_id)
-    connection = account.get_streaming_connection()
-    await connection.connect()
-
-    # Wait until synchronization completed
-    await connection.wait_synchronized()
+    # Use a context manager to ensure the connection is closed after use
+    async with api.metatrader_account_api.get_account(account_id) as account:
+        connection = account.get_streaming_connection()
+        await connection.connect()
+        try:
+            # Wait until synchronization completed
+            await connection.wait_synchronized()
+            # ... rest of your code for fetching and updating ...
+        finally:
+            await connection.disconnect()
+            # Explicitly call garbage collector after the operation
+            import gc
+            gc.collect()
 
     # Access local copy of terminal state
     terminalState = connection.terminal_state

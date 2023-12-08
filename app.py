@@ -41,7 +41,8 @@ async def fetch_and_update_positions():
     try:
         # Fetch account and use async with to manage the connection lifecycle
         account = await api.metatrader_account_api.get_account(account_id)
-        connection = await account.get_streaming_connection()
+        connection = account.get_streaming_connection()
+        await connection.connect()
         await connection.wait_synchronized()
         # Access local copy of terminal state
         terminalState = connection.terminal_state
@@ -79,9 +80,7 @@ async def fetch_and_update_account_info():
 
     # Fetch account and create a streaming connection
     account = await api.metatrader_account_api.get_account(account_id)
-    # Fetch account and create a streaming connection
-    account = await api.metatrader_account_api.get_account(account_id)
-    connection = await account.get_streaming_connection()
+    connection = account.get_streaming_connection()
     await connection.connect()
 
     # Wait until synchronization completed

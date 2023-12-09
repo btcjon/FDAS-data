@@ -1,9 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "api/*.py",
-        "use": "@vercel/python"
-      }
-    ]
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/*.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/fetch_and_update_positions",
+      "schedule": "*/1 * * * *"
+    },
+    {
+      "path": "/api/fetch_and_update_account_info",
+      "schedule": "*/10 * * * *"
+    }
+  ]
+}

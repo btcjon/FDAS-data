@@ -16,13 +16,14 @@ api_token = os.getenv('META_API_TOKEN')
 account_id = os.getenv('META_API_ACCOUNT_ID')
 print("MetaApi token and account id retrieved.")
 
-# Get MongoDB URI and database name
-mongodb_uri = os.getenv('MONGODB_URI')
+# Get Cosmos/MongoDB URI and database name
+#mongodb_uri = os.getenv('MONGODB_URI')
+cosmos_db_connection_string = os.getenv('COSMOS_DB_CONNECTION_STRING')
 db_name = os.getenv('DB_NAME')
 print("MongoDB URI and database name retrieved.")
 
 # Create a MongoDB client
-client = MongoClient(mongodb_uri)
+client = MongoClient(cosmos_db_connection_string)
 db = client[db_name]
 
 # Create a MongoDB collection for positions
@@ -62,7 +63,7 @@ async def fetch_and_update_positions():
     for position in fetched_positions:
         positions_collection.update_one({'id': position['id']}, {"$set": position}, upsert=True)
         fetched_position_ids.append(position['id'])
-    print(f"{len(fetched_positions)} positions updated or inserted in MongoDB.")
+    print(f"{len(fetched_positions)} positions updated or inserted into MongoDB.")
 
     # Fetch all positions from the database
     db_positions = positions_collection.find()
@@ -98,7 +99,7 @@ async def fetch_and_update_account_info():
 
     # Store account information in MongoDB
     account_info_collection.update_one({'id': account_id}, {"$set": account_info}, upsert=True)
-    print("Account information updated or inserted in MongoDB.")
+    print("Account information updated or inserted in Cosmos_MongoDB.")
 
 # Create a background scheduler and register shutdown procedure
 scheduler = BackgroundScheduler()

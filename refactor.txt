@@ -1,0 +1,17 @@
+Goal Statement: Refactor the existing Python application to run as serverless functions on Vercel, while maintaining MongoDB for data storage. The aim is to create a scalable, efficient, and fully managed application that fetches and stores trading data for a front-end KPI dashboarding application.
+
+1. **Refactor the Application**: Refactor the Python application to work with Vercel's serverless functions. This involves breaking down the application into separate, modular functions that can be deployed as individual serverless functions.
+
+2. **Create Modular Functions**: Break down the application into separate, modular functions that can be deployed as individual serverless functions on Vercel. Each function corresponds to a specific task, such as `fetch_and_update_positions` and `fetch_and_update_account_info`.
+
+3. **Create Vercel Serverless Functions**: For each function in the refactored application, create a corresponding serverless function on Vercel. This will be done in your local development environment, and each function will be placed in the `/api` directory at the root of your project.
+
+4. **Set up Timer Triggers**: For functions that need to run on a schedule, set up timer triggers using third-party services like EasyCron or cron-job.org to call your serverless functions at specified intervals.
+
+5. **Configure Environment Variables**: Add any necessary environment variables, such as the MongoDB connection string, to the Environment Variables settings of your Vercel project.
+
+6. **Deploy and Test**: Deploy the functions to Vercel from your local development environment and test them to ensure they're working correctly. Monitor their execution and troubleshoot any issues using the Vercel dashboard.
+
+7. **Monitor and Optimize**: Once the application is running, use Vercel's monitoring and diagnostics tools to track its performance and optimize as necessary. This could involve optimizing function code or adjusting the configuration of your MongoDB database.
+
+8. **Plan for Future Enhancements**: With the modular design, adding new collections from the MetaApi should be as simple as creating a new function for each collection, deploying it as a serverless function on Vercel, and setting up any necessary triggers or environment variables.
